@@ -1,6 +1,6 @@
 #
 #	install.sh - Installs neccesary components required for gengraph
-#	Copyright (C) 2010 Jaydeep Dhrangdhariya <jaydeep.gajjar90@gmail.com>
+#	Copyright (C) 2013 Jaydeep Dhrangdhariya <jaydeep.gajjar90@gmail.com>
 #	
 #	This program is free software; you can redistribute it and/or
 #	modify it under the terms of the GNU General Public License
