@@ -1,6 +1,8 @@
+#! /usr/bin/env bash
+
 #
 #	install.sh - Installs neccesary components required for gengraph
-#	Copyright (C) 2013 Jaydeep Dhrangdhariya <jaydeep.gajjar90@gmail.com>
+#	Copyright (C) 2015 Jaydeep Dhrangdhariya <jaydeep.gajjar90@gmail.com>
 #	
 #	This program is free software; you can redistribute it and/or
 #	modify it under the terms of the GNU General Public License
@@ -17,11 +19,18 @@
 #	Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #
 
-#!/bin/bash
-
 PROGRAM_NAME=gengraph
 
-check_for_root_user () {
+check_for_shell() {
+	if [ "$BASH" != "/bin/bash" ]; then
+		echo
+		echo "\Script is not running with bash shell. Aborting !!!"
+		echo
+		exit
+	fi
+}
+
+check_for_root_user() {
 	if [[ $EUID -ne 0 ]]; then
 		echo
 		echo "This script must be run as root" 1>&2
@@ -30,7 +39,7 @@ check_for_root_user () {
 	fi
 }
 
-function check_dependancy() {
+check_dependancy() {
 	local program=$1
 	echo "Checking for $program..."
 	local exit_on_not_found=$2
@@ -48,7 +57,7 @@ function check_dependancy() {
 	return 0
 }
 
-function install_program() {
+install_program() {
 
 	check_dependancy gcc "yes"
 	check_dependancy perl "yes"
@@ -107,7 +116,7 @@ function install_program() {
 	echo "Installation completed successfully."; echo
 }
 
-function uninstall_program() {
+uninstall_program() {
 	echo "Uninstalling dot..."
 	sudo apt-get -y remove graphviz > /dev/null 2>&1
 	echo "Uninstalling egypt..."
@@ -120,6 +129,7 @@ function uninstall_program() {
 
 CUR_DIR=$(pwd)
 
+check_for_shell
 check_for_root_user
 echo
 

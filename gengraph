@@ -1,6 +1,7 @@
-#
+#!/usr/bin/env bash
+
 #	gengraph - Generates static function call graph for C source code
-#	Copyright (C) 2013 Jaydeep Dhrangdhariya <jaydeep.gajjar90@gmail.com>
+#	Copyright (C) 2015 Jaydeep Dhrangdhariya <jaydeep.gajjar90@gmail.com>
 #	
 #	This program is free software; you can redistribute it and/or
 #	modify it under the terms of the GNU General Public License
@@ -17,19 +18,27 @@
 #	Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #
 
-#!/bin/bash
-
 PROGRAM_NAME=gengraph
-
-# Change the value of CC varible per your compiler name
 CC=gcc
+CC_TOOL=$CROSS_COMPILE$CC
 
-function print_usage() {
+check_for_shell() {
+	if [ "$BASH" != "/bin/bash" ]; then
+		echo
+		echo "Script is not running with bash shell. Aborting !!!"
+		echo
+		exit
+	fi
+}
+
+print_usage() {
 	echo
 	echo -e "\
-    [USAGE] : $PROGRAM_NAME [-o output_file_name] [-t image_type]
+    [USAGE] : $PROGRAM_NAME <CROSS_COMPILE=arm-linux-> [-o output_file_name] [-t image_type]
 	file1 file2  ... fileN
-																		
+
+	CROSS_COMPILE variable can be used to set prefix before default compiler '$CC'.
+
 	if -t flag and image_type both are ommited then, .png will be
 	default output format.
 	To know types that are supported, type
@@ -38,12 +47,12 @@ function print_usage() {
 	exit -1
 }
 
-function print_file_types() {
+print_file_types() {
 	echo -e "Use png, jpg, ps, pdf or svg as file type."; echo
 	exit -1
 }
 
-function generate_graph() {
+generate_graph() {
 	echo ""
 	# iterate over all supplied files
 	for file in $@
@@ -51,7 +60,7 @@ function generate_graph() {
 		find $file > /dev/null 2>&1
 		if [ $? -eq 0 ]; then
 			# Create rtl dump for current file
-			$CC -fdump-rtl-expand $file -o $file.TempOutput > /dev/null 2>&1
+			$CC_TOOL -fdump-rtl-expand $file -o $file.TempOutput > /dev/null 2>&1
 			find $file.*.expand > /dev/null 2>&1
 			if [ $? -eq 0 ]; then
 				# The rtl dump is generated, so merge it to final dump
@@ -75,6 +84,9 @@ function generate_graph() {
 	rm -rf gengraph_temp.expand
 	echo "[SUCCESS] : Generated graph."; echo
 }
+
+# check shell
+check_for_shell
 
 # Check for the arguments
 if [ $# -eq 0 ]; then
