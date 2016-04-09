@@ -48,7 +48,7 @@ print_usage() {
 }
 
 print_file_types() {
-	echo -e "Use png, jpg, ps, pdf or svg as file type."; echo
+	echo -e "Use png, jpg, ps, pdf, svg or dot as file type."; echo
 	exit -1
 }
 
@@ -80,7 +80,14 @@ generate_graph() {
 			exit -1
 		fi
 	done
-	egypt gengraph_temp.expand | dot -T$image_type -o $output_file_name.$image_type
+
+	if [ $image_type == "dot" ]
+	then
+		egypt gengraph_temp.expand > $output_file_name.$image_type
+	else
+		egypt gengraph_temp.expand | dot -T$image_type -o $output_file_name.$image_type
+	fi
+
 	rm -rf gengraph_temp.expand
 	echo "[SUCCESS] : Generated graph."; echo
 }
@@ -106,7 +113,7 @@ elif [ $# -ge 3 ]; then
 	output_file_name=$2
 	passed_args=3
 	if [[ $# -ge 5 && $3 == "-t" ]]; then
-		if [[ $4 == "png" || $4 == "jpg" || $4 == "ps" || $4 == "pdf" || $4 == "svg" ]]; then
+		if [[ $4 == "png" || $4 == "jpg" || $4 == "ps" || $4 == "pdf" || $4 == "svg" || $4 == "dot" ]]; then
 			# Image type is also supplied
 			image_type=$4
 			passed_args=5
