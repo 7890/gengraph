@@ -39,7 +39,7 @@ check_for_root_user() {
 	fi
 }
 
-check_dependancy() {
+check_dependency() {
 	local program=$1
 	echo "Checking for $program..."
 	local exit_on_not_found=$2
@@ -59,18 +59,18 @@ check_dependancy() {
 
 install_program() {
 
-	check_dependancy gcc "yes"
-	check_dependancy perl "yes"
-	check_dependancy git "yes"
-	check_dependancy dot "no"
+	check_dependency gcc "yes"
+	check_dependency perl "yes"
+	check_dependency git "yes"
+	check_dependency dot "no"
 
 	if [ $? -ne 0 ]; then
 		echo "Downloading and installing dot..."
 		sudo apt-get -y install graphviz > /dev/null 2>&1
-		check_dependancy dot "yes" > /dev/null 2>&1
+		check_dependency dot "yes" > /dev/null 2>&1
 	fi
 
-	check_dependancy egypt "no"
+	check_dependency egypt "no"
 	if [ $? -ne 0 ]; then
 		cd /tmp
 		echo "Downloading and installing egypt..."
@@ -117,12 +117,17 @@ install_program() {
 }
 
 uninstall_program() {
-	echo "Uninstalling dot..."
-	sudo apt-get -y remove graphviz > /dev/null 2>&1
-	echo "Uninstalling egypt..."
-	sudo rm -rf /usr/local/bin/egypt
+#	echo "Uninstalling dot..."
+#	sudo apt-get -y remove graphviz > /dev/null 2>&1
+#	echo "Uninstalling egypt..."
+#	sudo rm -rf /usr/local/bin/egypt
 	echo "Uninstalling $PROGRAM_NAME..."
 	sudo rm -rf /usr/local/bin/gengraph
+	echo
+	echo "gengraph depends on other packages, however they won't be uninstalled automatically."
+	echo "To manually uninstall:"
+	echo "sudo apt-get -y remove graphviz"
+	echo "sudo rm -rf /usr/local/bin/egypt"
 	echo
 	echo "Uninstallation completed successfully."; echo
 }
